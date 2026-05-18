@@ -1,3 +1,9 @@
+// @title SmartTransit Bus API
+// @version 1.0
+// @description SmartTransit Backend APIs
+// @host localhost:8080
+// @BasePath /
+
 package main
 
 import (
@@ -7,6 +13,11 @@ import (
 	"smarttransit-backend/internal/buses"
 	"smarttransit-backend/internal/routes"
 	"smarttransit-backend/internal/schedules"
+
+	_ "smarttransit-backend/docs"
+
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -19,6 +30,11 @@ func main() {
 	database.ConnectDB()
 
 	router := gin.Default()
+
+	router.GET(
+		"/swagger/*any",
+		ginSwagger.WrapHandler(swaggerFiles.Handler),
+	)
 
 	router.Use(cors.Default())
 

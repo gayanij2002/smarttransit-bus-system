@@ -121,3 +121,19 @@ func UpdateRoute(
 
 	return err
 }
+
+func DeleteRoute(id string) error {
+
+	query := `
+	DELETE FROM routes
+	WHERE id=$1
+	`
+
+	_, err := database.DB.Exec(
+		context.Background(),
+		query,
+		id,
+	)
+
+	return err
+}

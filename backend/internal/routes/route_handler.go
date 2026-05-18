@@ -93,3 +93,21 @@ func UpdateRouteHandler(c *gin.Context) {
 		"message": "Route updated successfully",
 	})
 }
+
+func DeleteRouteHandler(c *gin.Context) {
+
+	id := c.Param("id")
+
+	err := DeleteRoute(id)
+
+	if err != nil {
+		c.JSON(500, gin.H{
+			"error": "Failed to delete route",
+		})
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"message": "Route deleted successfully",
+	})
+}

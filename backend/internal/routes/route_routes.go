@@ -25,5 +25,11 @@ func RouteRoutes(router *gin.Engine) {
 			middleware.JWTAuthMiddleware(),
 			UpdateRouteHandler,
 		)
+
+		route.DELETE(
+			"/:id",
+			middleware.JWTAuthMiddleware(),
+			DeleteRouteHandler,
+		)
 	}
 }

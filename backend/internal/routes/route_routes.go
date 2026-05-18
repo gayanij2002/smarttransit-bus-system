@@ -12,10 +12,18 @@ func RouteRoutes(router *gin.Engine) {
 	{
 		route.GET("/", GetRoutesHandler)
 
+		route.GET("/:id", GetRouteByIDHandler)
+
 		route.POST(
 			"/",
 			middleware.JWTAuthMiddleware(),
 			CreateRouteHandler,
+		)
+
+		route.PUT(
+			"/:id",
+			middleware.JWTAuthMiddleware(),
+			UpdateRouteHandler,
 		)
 	}
 }

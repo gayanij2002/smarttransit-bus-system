@@ -70,3 +70,54 @@ func GetAllRoutes() ([]Route, error) {
 
 	return routes, nil
 }
+
+func GetRouteByID(id string) (Route, error) {
+
+	var route Route
+
+	query := `
+	SELECT id, start_location, end_location, distance, created_at
+	FROM routes
+	WHERE id=$1
+	`
+
+	err := database.DB.QueryRow(
+		context.Background(),
+		query,
+		id,
+	).Scan(
+		&route.ID,
+		&route.StartLocation,
+		&route.EndLocation,
+		&route.Distance,
+		&route.CreatedAt,
+	)
+
+	return route, err
+}
+
+func UpdateRoute(
+	id string,
+	route Route,
+) error {
+
+	query := `
+	UPDATE routes
+	SET
+		start_location=$1,
+		end_location=$2,
+		distance=$3
+	WHERE id=$4
+	`
+
+	_, err := database.DB.Exec(
+		context.Background(),
+		query,
+		route.StartLocation,
+		route.EndLocation,
+		route.Distance,
+		id,
+	)
+
+	return err
+}

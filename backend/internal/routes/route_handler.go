@@ -6,6 +6,16 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// CreateRoute godoc
+// @Summary Create route
+// @Description Create new route
+// @Tags Routes
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param route body CreateRouteRequest true "Create Route"
+// @Success 200 {object} map[string]interface{}
+// @Router /api/routes/ [post]
 func CreateRouteHandler(c *gin.Context) {
 
 	var request CreateRouteRequest
@@ -35,6 +45,13 @@ func CreateRouteHandler(c *gin.Context) {
 	})
 }
 
+// GetRoutes godoc
+// @Summary Get all routes
+// @Description Retrieve all routes
+// @Tags Routes
+// @Produce json
+// @Success 200 {array} Route
+// @Router /api/routes/ [get]
 func GetRoutesHandler(c *gin.Context) {
 
 	routes, err := GetRoutesService()
@@ -51,6 +68,14 @@ func GetRoutesHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, routes)
 }
 
+// GetRouteByID godoc
+// @Summary Get route by ID
+// @Description Retrieve single route
+// @Tags Routes
+// @Produce json
+// @Param id path string true "Route ID"
+// @Success 200 {object} Route
+// @Router /api/routes/{id} [get]
 func GetRouteByIDHandler(c *gin.Context) {
 
 	id := c.Param("id")
@@ -67,6 +92,17 @@ func GetRouteByIDHandler(c *gin.Context) {
 	c.JSON(200, route)
 }
 
+// UpdateRoute godoc
+// @Summary Update route
+// @Description Update existing route
+// @Tags Routes
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param id path string true "Route ID"
+// @Param route body Route true "Update Route"
+// @Success 200 {object} map[string]interface{}
+// @Router /api/routes/{id} [put]
 func UpdateRouteHandler(c *gin.Context) {
 
 	id := c.Param("id")
@@ -94,6 +130,15 @@ func UpdateRouteHandler(c *gin.Context) {
 	})
 }
 
+// DeleteRoute godoc
+// @Summary Delete route
+// @Description Delete route
+// @Tags Routes
+// @Security BearerAuth
+// @Produce json
+// @Param id path string true "Route ID"
+// @Success 200 {object} map[string]interface{}
+// @Router /api/routes/{id} [delete]
 func DeleteRouteHandler(c *gin.Context) {
 
 	id := c.Param("id")

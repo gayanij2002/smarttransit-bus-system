@@ -6,6 +6,16 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// CreateBus godoc
+// @Summary Create bus
+// @Description Create new bus
+// @Tags Buses
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param bus body CreateBusRequest true "Create Bus"
+// @Success 200 {object} map[string]interface{}
+// @Router /api/buses/ [post]
 func CreateBusHandler(c *gin.Context) {
 
 	var request CreateBusRequest
@@ -35,6 +45,13 @@ func CreateBusHandler(c *gin.Context) {
 	})
 }
 
+// GetBuses godoc
+// @Summary Get all buses
+// @Description Retrieve all buses
+// @Tags Buses
+// @Produce json
+// @Success 200 {array} Bus
+// @Router /api/buses/ [get]
 func GetBusesHandler(c *gin.Context) {
 
 	buses, err := GetBusesService()
@@ -51,6 +68,14 @@ func GetBusesHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, buses)
 }
 
+// GetBusByID godoc
+// @Summary Get bus by ID
+// @Description Retrieve single bus
+// @Tags Buses
+// @Produce json
+// @Param id path string true "Bus ID"
+// @Success 200 {object} Bus
+// @Router /api/buses/{id} [get]
 func GetBusByIDHandler(c *gin.Context) {
 
 	id := c.Param("id")
@@ -69,6 +94,17 @@ func GetBusByIDHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, bus)
 }
 
+// UpdateBus godoc
+// @Summary Update bus
+// @Description Update existing bus
+// @Tags Buses
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param id path string true "Bus ID"
+// @Param bus body Bus true "Update Bus"
+// @Success 200 {object} map[string]interface{}
+// @Router /api/buses/{id} [put]
 func UpdateBusHandler(c *gin.Context) {
 
 	id := c.Param("id")
@@ -100,6 +136,15 @@ func UpdateBusHandler(c *gin.Context) {
 	})
 }
 
+// DeleteBus godoc
+// @Summary Delete bus
+// @Description Delete bus
+// @Tags Buses
+// @Security BearerAuth
+// @Produce json
+// @Param id path string true "Bus ID"
+// @Success 200 {object} map[string]interface{}
+// @Router /api/buses/{id} [delete]
 func DeleteBusHandler(c *gin.Context) {
 
 	id := c.Param("id")

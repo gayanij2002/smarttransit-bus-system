@@ -6,6 +6,16 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// CreateSchedule godoc
+// @Summary Create schedule
+// @Description Create new schedule
+// @Tags Schedules
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param schedule body CreateScheduleRequest true "Create Schedule"
+// @Success 200 {object} map[string]interface{}
+// @Router /api/schedules/ [post]
 func CreateScheduleHandler(c *gin.Context) {
 
 	var request CreateScheduleRequest
@@ -35,6 +45,13 @@ func CreateScheduleHandler(c *gin.Context) {
 	})
 }
 
+// GetSchedules godoc
+// @Summary Get all schedules
+// @Description Retrieve all schedules
+// @Tags Schedules
+// @Produce json
+// @Success 200 {array} Schedule
+// @Router /api/schedules/ [get]
 func GetSchedulesHandler(c *gin.Context) {
 
 	schedules, err := GetSchedulesService()
@@ -51,6 +68,14 @@ func GetSchedulesHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, schedules)
 }
 
+// GetScheduleByID godoc
+// @Summary Get schedule by ID
+// @Description Retrieve single schedule
+// @Tags Schedules
+// @Produce json
+// @Param id path string true "Schedule ID"
+// @Success 200 {object} Schedule
+// @Router /api/schedules/{id} [get]
 func GetScheduleByIDHandler(c *gin.Context) {
 
 	id := c.Param("id")
@@ -67,6 +92,17 @@ func GetScheduleByIDHandler(c *gin.Context) {
 	c.JSON(200, schedule)
 }
 
+// UpdateSchedule godoc
+// @Summary Update schedule
+// @Description Update existing schedule
+// @Tags Schedules
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param id path string true "Schedule ID"
+// @Param schedule body Schedule true "Update Schedule"
+// @Success 200 {object} map[string]interface{}
+// @Router /api/schedules/{id} [put]
 func UpdateScheduleHandler(c *gin.Context) {
 
 	id := c.Param("id")
@@ -94,6 +130,15 @@ func UpdateScheduleHandler(c *gin.Context) {
 	})
 }
 
+// DeleteSchedule godoc
+// @Summary Delete schedule
+// @Description Delete schedule
+// @Tags Schedules
+// @Security BearerAuth
+// @Produce json
+// @Param id path string true "Schedule ID"
+// @Success 200 {object} map[string]interface{}
+// @Router /api/schedules/{id} [delete]
 func DeleteScheduleHandler(c *gin.Context) {
 
 	id := c.Param("id")

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import 'theme/app_theme.dart';
 import 'screens/login_screen.dart';
 
 void main() {
@@ -12,11 +14,11 @@ class SmartTransitApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+
       title: 'SmartTransit',
-      theme: ThemeData(
-        fontFamily: 'Roboto',
-        primaryColor: const Color(0xFF8E24AA),
-      ),
+
+      theme: AppTheme.lightTheme,
+
       home: const LoginScreen(),
     );
   }

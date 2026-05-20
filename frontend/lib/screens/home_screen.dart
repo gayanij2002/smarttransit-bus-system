@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/screens/favorite_service.dart';
 
 import '../theme/app_theme.dart';
 import '../models/bus_model.dart';
 import '../services/bus_service.dart';
 import 'bus_details_screen.dart';
+// ignore: unused_import
+import '../services/favorite_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -14,6 +17,8 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   List<BusModel> buses = [];
+
+  List<BusModel> filteredBuses = [];
 
   bool isLoading = true;
 
@@ -30,7 +35,25 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       buses = data;
 
+      filteredBuses = data;
+
       isLoading = false;
+    });
+  }
+
+  void searchBus(String query) {
+    final results = buses.where((bus) {
+      final name = bus.busName.toLowerCase();
+
+      final number = bus.busNumber.toLowerCase();
+
+      final input = query.toLowerCase();
+
+      return name.contains(input) || number.contains(input);
+    }).toList();
+
+    setState(() {
+      filteredBuses = results;
     });
   }
 
@@ -120,6 +143,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: const [
                         Text(
                           "Available Buses",
+
                           style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
@@ -129,6 +153,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                         Text(
                           "FILTER",
+
                           style: TextStyle(
                             color: buttonViolet,
                             fontWeight: FontWeight.bold,
@@ -148,6 +173,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                         boxShadow: [
                           BoxShadow(
+                            // ignore: deprecated_member_use
                             color: Colors.black.withOpacity(0.04),
                             blurRadius: 10,
                           ),
@@ -155,6 +181,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
 
                       child: TextField(
+                        onChanged: searchBus,
+
                         decoration: InputDecoration(
                           hintText: "Search buses...",
 
@@ -181,13 +209,25 @@ class _HomeScreenState extends State<HomeScreen> {
                     Expanded(
                       child: isLoading
                           ? const Center(child: CircularProgressIndicator())
+                          : filteredBuses.isEmpty
+                          ? const Center(
+                              child: Text(
+                                "No Buses Found",
+
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            )
                           : ListView.builder(
                               physics: const BouncingScrollPhysics(),
 
-                              itemCount: buses.length,
+                              itemCount: filteredBuses.length,
 
                               itemBuilder: (context, index) {
-                                final bus = buses[index];
+                                final bus = filteredBuses[index];
 
                                 return Padding(
                                   padding: const EdgeInsets.only(bottom: 18),
@@ -197,8 +237,6 @@ class _HomeScreenState extends State<HomeScreen> {
                               },
                             ),
                     ),
-
-                    // ================= BOTTOM NAV =================
                   ],
                 ),
               ),
@@ -212,13 +250,21 @@ class _HomeScreenState extends State<HomeScreen> {
 
 // ================= BUS CARD =================
 
-class BusCard extends StatelessWidget {
+class BusCard extends StatefulWidget {
   final BusModel bus;
 
   const BusCard({super.key, required this.bus});
 
   @override
+  State<BusCard> createState() => _BusCardState();
+}
+
+class _BusCardState extends State<BusCard> {
+  @override
   Widget build(BuildContext context) {
+    final bus = widget.bus;
+
+    final isFavorite = FavoriteService.isFavorite(bus);
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -239,6 +285,7 @@ class BusCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(24),
 
           boxShadow: [
+            // ignore: deprecated_member_use
             BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10),
           ],
         ),
@@ -250,6 +297,7 @@ class BusCard extends StatelessWidget {
               padding: const EdgeInsets.all(16),
 
               decoration: BoxDecoration(
+                // ignore: deprecated_member_use
                 color: accentPurple.withOpacity(0.20),
 
                 borderRadius: BorderRadius.circular(18),
@@ -304,7 +352,28 @@ class BusCard extends StatelessWidget {
             ),
 
             // ================= ARROW =================
-            const Icon(Icons.arrow_forward_ios, color: buttonViolet),
+            Column(
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      FavoriteService.toggleFavorite(bus);
+                    });
+                  },
+
+                  child: Icon(
+                    isFavorite ? Icons.favorite : Icons.favorite_border,
+
+                    color: Colors.red,
+                    size: 30,
+                  ),
+                ),
+
+                const SizedBox(height: 14),
+
+                const Icon(Icons.arrow_forward_ios, color: buttonViolet),
+              ],
+            ),
           ],
         ),
       ),

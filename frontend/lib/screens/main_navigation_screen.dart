@@ -5,6 +5,8 @@ import '../theme/app_theme.dart';
 import 'home_screen.dart';
 import 'favorites_screen.dart';
 import 'profile_screen.dart';
+import 'routes_screen.dart';
+import 'live_tracking_screen.dart';
 import 'login_screen.dart' hide buttonViolet;
 
 class MainNavigationScreen extends StatefulWidget {
@@ -21,6 +23,10 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     const HomeScreen(),
 
     const FavoritesScreen(),
+
+    const RoutesScreen(),
+
+    const LiveTrackingScreen(),
 
     const ProfileScreen(),
   ];
@@ -42,7 +48,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
         type: BottomNavigationBarType.fixed,
 
         onTap: (index) {
-          if (index == 3) {
+          if (index == 5) {
             Navigator.pushReplacement(
               context,
 
@@ -63,6 +69,13 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
           BottomNavigationBarItem(
             icon: Icon(Icons.favorite),
             label: "Favorites",
+          ),
+
+          BottomNavigationBarItem(icon: Icon(Icons.route), label: "Routes"),
+
+          BottomNavigationBarItem(
+            icon: Icon(Icons.location_on),
+            label: "Tracking",
           ),
 
           BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),

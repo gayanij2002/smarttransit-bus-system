@@ -56,6 +56,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   boxShadow: [
                     BoxShadow(
+                      // ignore: deprecated_member_use
                       color: Colors.black.withOpacity(0.15),
                       blurRadius: 20,
                       offset: const Offset(0, 10),
@@ -269,6 +270,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             });
 
                             if (success) {
+                              // ignore: use_build_context_synchronously
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                   content: Text("Login Successful"),
@@ -277,6 +279,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               );
 
                               Navigator.pushReplacement(
+                                // ignore: use_build_context_synchronously
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) =>
@@ -284,6 +287,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                               );
                             } else {
+                              // ignore: use_build_context_synchronously
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                   content: Text("Invalid email or password"),

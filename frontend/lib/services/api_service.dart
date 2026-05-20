@@ -14,6 +14,7 @@ class ApiService {
         body: jsonEncode({"email": email, "password": password}),
       );
 
+      // ignore: avoid_print
       print(response.body);
 
       if (response.statusCode == 200) {
@@ -22,6 +23,7 @@ class ApiService {
 
       return false;
     } catch (e) {
+      // ignore: avoid_print
       print("LOGIN ERROR: $e");
 
       return false;

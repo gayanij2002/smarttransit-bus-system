@@ -21,6 +21,7 @@ class BusService {
 
       return [];
     } catch (e) {
+      // ignore: avoid_print
       print(e);
 
       return [];

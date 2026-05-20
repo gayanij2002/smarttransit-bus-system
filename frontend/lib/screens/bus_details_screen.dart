@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/screens/booking_screen.dart';
 
 import '../models/bus_model.dart';
 import '../theme/app_theme.dart';
@@ -53,6 +54,7 @@ class BusDetailsScreen extends StatelessWidget {
                       padding: const EdgeInsets.all(24),
 
                       decoration: BoxDecoration(
+                        // ignore: deprecated_member_use
                         color: Colors.white.withOpacity(0.15),
 
                         borderRadius: BorderRadius.circular(24),
@@ -143,6 +145,7 @@ class BusDetailsScreen extends StatelessWidget {
 
                         boxShadow: [
                           BoxShadow(
+                            // ignore: deprecated_member_use
                             color: Colors.black.withOpacity(0.05),
                             blurRadius: 10,
                           ),
@@ -195,13 +198,15 @@ class BusDetailsScreen extends StatelessWidget {
                     // ================= BUTTON =================
                     SizedBox(
                       width: double.infinity,
-                      height: 58,
+                      height: 60,
 
                       child: ElevatedButton(
                         onPressed: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text("Bus Selected Successfully"),
+                          Navigator.push(
+                            context,
+
+                            MaterialPageRoute(
+                              builder: (context) => const BookingScreen(),
                             ),
                           );
                         },
@@ -215,12 +220,12 @@ class BusDetailsScreen extends StatelessWidget {
                         ),
 
                         child: const Text(
-                          "Book Now",
+                          "Book Seats",
 
                           style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
                             color: Colors.white,
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
@@ -244,6 +249,7 @@ class BusDetailsScreen extends StatelessWidget {
           padding: const EdgeInsets.all(12),
 
           decoration: BoxDecoration(
+            // ignore: deprecated_member_use
             color: accentPurple.withOpacity(0.15),
 
             borderRadius: BorderRadius.circular(14),
@@ -309,6 +315,7 @@ class InfoCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(24),
 
         boxShadow: [
+          // ignore: deprecated_member_use
           BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10),
         ],
       ),

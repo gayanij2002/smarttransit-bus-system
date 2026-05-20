@@ -28,6 +28,7 @@ class ProfileScreen extends StatelessWidget {
             CircleAvatar(
               radius: 55,
 
+              // ignore: deprecated_member_use
               backgroundColor: accentPurple.withOpacity(0.3),
 
               child: const Icon(Icons.person, size: 60, color: buttonViolet),
@@ -76,6 +77,7 @@ class ProfileScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(18),
 
         boxShadow: [
+          // ignore: deprecated_member_use
           BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 8),
         ],
       ),

@@ -35,6 +35,18 @@ func CreateBookingHandler(
 		return
 	}
 
+	if len(request.Seats) == 0 {
+
+		c.JSON(
+			http.StatusBadRequest,
+			gin.H{
+				"error": "no seats selected",
+			},
+		)
+
+		return
+	}
+
 	err := CreateBookingService(
 		request,
 	)

@@ -13,7 +13,7 @@ type Booking struct {
 }
 
 type CreateBookingRequest struct {
-	BusID string `json:"bus_id"`
+	BusID string `json:"bus_id" binding:"required"`
 
-	Seats []int `json:"seats"`
+	Seats []int `json:"seats" binding:"required"`
 }

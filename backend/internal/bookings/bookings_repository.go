@@ -14,9 +14,9 @@ func CreateBooking(
 	booking CreateBookingRequest,
 ) error {
 
-	// ================= CHECK BOOKED SEATS =================
+	// ================= GET EXISTING BOOKED SEATS =================
 
-	checkQuery := `
+	query := `
 SELECT seats
 FROM bookings
 WHERE bus_id=$1
@@ -24,7 +24,7 @@ WHERE bus_id=$1
 
 	rows, err := database.DB.Query(
 		context.Background(),
-		checkQuery,
+		query,
 		booking.BusID,
 	)
 
@@ -46,37 +46,37 @@ WHERE bus_id=$1
 			return err
 		}
 
-		var bookedSeats []int
+		var seats []int
 
 		err = json.Unmarshal(
 			seatsData,
-			&bookedSeats,
+			&seats,
 		)
 
 		if err != nil {
 			return err
 		}
 
-		for _, seat := range bookedSeats {
+		for _, seat := range seats {
 			bookedSeatsMap[seat] = true
 		}
 	}
 
-	// ================= VALIDATE REQUESTED SEATS =================
+	// ================= CHECK DUPLICATES =================
 
 	for _, seat := range booking.Seats {
 
 		if bookedSeatsMap[seat] {
 
 			return errors.New(
-				"seat already booked",
+				"one or more seats already booked",
 			)
 		}
 	}
 
-	// ================= INSERT BOOKING =================
+	// ================= SAVE BOOKING =================
 
-	query := `
+	insertQuery := `
 INSERT INTO bookings (
 	id,
 	bus_id,
@@ -95,14 +95,13 @@ VALUES ($1, $2, $3)
 
 	_, err = database.DB.Exec(
 		context.Background(),
-		query,
+		insertQuery,
 		uuid.New().String(),
 		booking.BusID,
 		seatsJSON,
 	)
 
 	return err
-
 }
 
 func GetAllBookings() (
@@ -166,7 +165,6 @@ ORDER BY created_at DESC
 	}
 
 	return bookings, nil
-
 }
 
 func GetBookedSeatsByBusID(
@@ -191,7 +189,7 @@ WHERE bus_id=$1
 
 	defer rows.Close()
 
-	var bookedSeats []int
+	bookedSeatsMap := make(map[int]bool)
 
 	for rows.Next() {
 
@@ -214,12 +212,19 @@ WHERE bus_id=$1
 			return nil, err
 		}
 
+		for _, seat := range seats {
+			bookedSeatsMap[seat] = true
+		}
+	}
+
+	var bookedSeats []int
+
+	for seat := range bookedSeatsMap {
 		bookedSeats = append(
 			bookedSeats,
-			seats...,
+			seat,
 		)
 	}
 
 	return bookedSeats, nil
-
 }

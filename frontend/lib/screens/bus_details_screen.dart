@@ -54,7 +54,6 @@ class BusDetailsScreen extends StatelessWidget {
                       padding: const EdgeInsets.all(24),
 
                       decoration: BoxDecoration(
-                        // ignore: deprecated_member_use
                         color: Colors.white.withOpacity(0.15),
 
                         borderRadius: BorderRadius.circular(24),
@@ -132,7 +131,7 @@ class BusDetailsScreen extends StatelessWidget {
 
                     const SizedBox(height: 22),
 
-                    // ================= DETAILS SECTION =================
+                    // ================= DETAILS =================
                     Container(
                       width: double.infinity,
 
@@ -145,7 +144,6 @@ class BusDetailsScreen extends StatelessWidget {
 
                         boxShadow: [
                           BoxShadow(
-                            // ignore: deprecated_member_use
                             color: Colors.black.withOpacity(0.05),
                             blurRadius: 10,
                           ),
@@ -195,13 +193,24 @@ class BusDetailsScreen extends StatelessWidget {
 
                     const SizedBox(height: 28),
 
-                    // ================= BUTTON =================
+                    // ================= BOOK BUTTON =================
                     SizedBox(
                       width: double.infinity,
                       height: 60,
 
                       child: ElevatedButton(
                         onPressed: () {
+                          if (bus.id.isEmpty) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("Invalid bus ID"),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+
+                            return;
+                          }
+
                           Navigator.push(
                             context,
 
@@ -250,7 +259,6 @@ class BusDetailsScreen extends StatelessWidget {
           padding: const EdgeInsets.all(12),
 
           decoration: BoxDecoration(
-            // ignore: deprecated_member_use
             color: accentPurple.withOpacity(0.15),
 
             borderRadius: BorderRadius.circular(14),
@@ -295,7 +303,9 @@ class BusDetailsScreen extends StatelessWidget {
 
 class InfoCard extends StatelessWidget {
   final IconData icon;
+
   final String title;
+
   final String subtitle;
 
   const InfoCard({
@@ -316,7 +326,6 @@ class InfoCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(24),
 
         boxShadow: [
-          // ignore: deprecated_member_use
           BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10),
         ],
       ),

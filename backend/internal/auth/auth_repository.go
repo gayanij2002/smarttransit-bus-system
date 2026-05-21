@@ -31,7 +31,7 @@ func GetUserByEmail(email string) (*User, error) {
 	query := `
 	SELECT id, name, email, password, created_at
 	FROM users
-	WHERE email=$1
+	WHERE LOWER(email)=LOWER($1)
 	`
 
 	row := database.DB.QueryRow(context.Background(), query, email)

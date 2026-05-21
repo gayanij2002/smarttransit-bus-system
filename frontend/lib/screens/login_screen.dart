@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../services/api_service.dart';
 
+import 'register_screen.dart';
+
 import 'main_navigation_screen.dart';
 
 const Color primaryBlue = Color(0xFF2E3192);
@@ -355,9 +357,25 @@ class _LoginScreenState extends State<LoginScreen> {
 
                       const SizedBox(height: 18),
 
-                      const Text(
-                        "Forgot Password?",
-                        style: TextStyle(color: Colors.white, fontSize: 18),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+
+                            MaterialPageRoute(
+                              builder: (context) => const RegisterScreen(),
+                            ),
+                          );
+                        },
+
+                        child: const Text(
+                          "Create New Account",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
 
                       const SizedBox(height: 10),

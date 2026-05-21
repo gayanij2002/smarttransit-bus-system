@@ -206,7 +206,8 @@ class BusDetailsScreen extends StatelessWidget {
                             context,
 
                             MaterialPageRoute(
-                              builder: (context) => const BookingScreen(),
+                              builder: (context) =>
+                                  BookingScreen(busId: bus.id),
                             ),
                           );
                         },

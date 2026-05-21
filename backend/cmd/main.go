@@ -7,12 +7,14 @@
 // @securityDefinitions.apikey BearerAuth
 // @in header
 // @name Authorization
+
 package main
 
 import (
 	"smarttransit-backend/config"
 	"smarttransit-backend/database"
 	"smarttransit-backend/internal/auth"
+	"smarttransit-backend/internal/bookings"
 	"smarttransit-backend/internal/buses"
 	"smarttransit-backend/internal/routes"
 	"smarttransit-backend/internal/schedules"
@@ -48,6 +50,10 @@ func main() {
 	routes.RouteRoutes(router)
 
 	schedules.ScheduleRoutes(router)
+
+	bookings.BookingRoutes(
+		router.Group("/api"),
+	)
 
 	router.GET("/", func(c *gin.Context) {
 		c.JSON(200, gin.H{

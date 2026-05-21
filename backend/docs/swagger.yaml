@@ -16,6 +16,28 @@ definitions:
       password:
         type: string
     type: object
+  bookings.Booking:
+    properties:
+      bus_id:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      seats:
+        items:
+          type: integer
+        type: array
+    type: object
+  bookings.CreateBookingRequest:
+    properties:
+      bus_id:
+        type: string
+      seats:
+        items:
+          type: integer
+        type: array
+    type: object
   buses.Bus:
     properties:
       bus_name:
@@ -155,6 +177,64 @@ paths:
       summary: Register user
       tags:
       - Auth
+  /api/bookings/:
+    get:
+      description: Retrieve all bookings
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/bookings.Booking'
+            type: array
+      summary: Get bookings
+      tags:
+      - Bookings
+    post:
+      consumes:
+      - application/json
+      description: Create new booking
+      parameters:
+      - description: Booking
+        in: body
+        name: booking
+        required: true
+        schema:
+          $ref: '#/definitions/bookings.CreateBookingRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Create booking
+      tags:
+      - Bookings
+  /api/bookings/seats/{bus_id}:
+    get:
+      description: Retrieve booked seats for a bus
+      parameters:
+      - description: Bus ID
+        in: path
+        name: bus_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              type: integer
+            type: array
+      summary: Get booked seats
+      tags:
+      - Bookings
   /api/buses/:
     get:
       description: Retrieve all buses

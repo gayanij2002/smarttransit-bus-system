@@ -111,6 +111,94 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/bookings/": {
+            "get": {
+                "description": "Retrieve all bookings",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Bookings"
+                ],
+                "summary": "Get bookings",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/bookings.Booking"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create new booking",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Bookings"
+                ],
+                "summary": "Create booking",
+                "parameters": [
+                    {
+                        "description": "Booking",
+                        "name": "booking",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/bookings.CreateBookingRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/api/bookings/seats/{bus_id}": {
+            "get": {
+                "description": "Retrieve booked seats for a bus",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Bookings"
+                ],
+                "summary": "Get booked seats",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bus ID",
+                        "name": "bus_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "integer"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/buses/": {
             "get": {
                 "description": "Retrieve all buses",
@@ -639,6 +727,40 @@ const docTemplate = `{
                 },
                 "password": {
                     "type": "string"
+                }
+            }
+        },
+        "bookings.Booking": {
+            "type": "object",
+            "properties": {
+                "bus_id": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "seats": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "bookings.CreateBookingRequest": {
+            "type": "object",
+            "properties": {
+                "bus_id": {
+                    "type": "string"
+                },
+                "seats": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
                 }
             }
         },

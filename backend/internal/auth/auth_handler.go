@@ -1,7 +1,9 @@
 package auth
 
 import (
+	"context"
 	"net/http"
+	"smarttransit-backend/database"
 
 	"github.com/gin-gonic/gin"
 )
@@ -86,8 +88,33 @@ func Profile(c *gin.Context) {
 
 	userID, _ := c.Get("user_id")
 
+	var name string
+	var email string
+
+	err := database.DB.QueryRow(
+		context.Background(),
+		`
+	SELECT name, email
+	FROM users
+	WHERE id = $1
+	`,
+		userID,
+	).Scan(
+		&name,
+		&email,
+	)
+
+	if err != nil {
+
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "User not found",
+		})
+
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
-		"message": "Protected profile route",
-		"user_id": userID,
+		"name":  name,
+		"email": email,
 	})
 }

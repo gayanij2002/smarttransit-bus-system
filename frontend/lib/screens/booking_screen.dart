@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 
 import '../theme/app_theme.dart';
+import '../services/booking_service.dart';
+import '../models/booking_model.dart';
 
 class BookingScreen extends StatefulWidget {
-  const BookingScreen({super.key});
+  final String busId;
+
+  const BookingScreen({super.key, required this.busId});
 
   @override
   State<BookingScreen> createState() => _BookingScreenState();
@@ -12,7 +16,24 @@ class BookingScreen extends StatefulWidget {
 class _BookingScreenState extends State<BookingScreen> {
   List<int> selectedSeats = [];
 
+  List<int> bookedSeats = [];
+
   final int ticketPrice = 1500;
+
+  @override
+  void initState() {
+    super.initState();
+
+    loadBookedSeats();
+  }
+
+  Future<void> loadBookedSeats() async {
+    List<int> seats = await BookingService.getBookedSeats(widget.busId);
+
+    setState(() {
+      bookedSeats = seats;
+    });
+  }
 
   void toggleSeat(int seatNumber) {
     setState(() {
@@ -86,6 +107,7 @@ class _BookingScreenState extends State<BookingScreen> {
 
                     decoration: BoxDecoration(
                       color: Colors.white,
+
                       borderRadius: BorderRadius.circular(12),
                     ),
 
@@ -175,20 +197,29 @@ class _BookingScreenState extends State<BookingScreen> {
 
                           bool isSelected = selectedSeats.contains(seatNumber);
 
+                          bool isBooked = bookedSeats.contains(seatNumber);
+
                           return GestureDetector(
-                            onTap: () {
-                              toggleSeat(seatNumber);
-                            },
+                            onTap: isBooked
+                                ? null
+                                : () {
+                                    toggleSeat(seatNumber);
+                                  },
 
                             child: Container(
                               decoration: BoxDecoration(
-                                color: isSelected ? buttonViolet : Colors.white,
+                                color: isBooked
+                                    ? Colors.grey.shade400
+                                    : isSelected
+                                    ? buttonViolet
+                                    : Colors.white,
 
                                 borderRadius: BorderRadius.circular(18),
 
                                 boxShadow: [
                                   BoxShadow(
                                     color: Colors.black.withOpacity(0.05),
+
                                     blurRadius: 8,
                                   ),
                                 ],
@@ -201,7 +232,9 @@ class _BookingScreenState extends State<BookingScreen> {
                                   Icon(
                                     Icons.event_seat,
 
-                                    color: isSelected
+                                    color: isBooked
+                                        ? Colors.white
+                                        : isSelected
                                         ? Colors.white
                                         : buttonViolet,
 
@@ -214,7 +247,9 @@ class _BookingScreenState extends State<BookingScreen> {
                                     seatNumber.toString(),
 
                                     style: TextStyle(
-                                      color: isSelected
+                                      color: isBooked
+                                          ? Colors.white
+                                          : isSelected
                                           ? Colors.white
                                           : textGray,
 
@@ -243,6 +278,7 @@ class _BookingScreenState extends State<BookingScreen> {
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withOpacity(0.05),
+
                             blurRadius: 10,
                           ),
                         ],
@@ -312,16 +348,47 @@ class _BookingScreenState extends State<BookingScreen> {
                             child: ElevatedButton(
                               onPressed: selectedSeats.isEmpty
                                   ? null
-                                  : () {
-                                      ScaffoldMessenger.of(
-                                        context,
-                                      ).showSnackBar(
-                                        const SnackBar(
-                                          content: Text("Booking Successful"),
+                                  : () async {
+                                      BookingModel booking = BookingModel(
+                                        busId: widget.busId,
 
-                                          backgroundColor: Colors.green,
-                                        ),
+                                        seats: selectedSeats,
                                       );
+
+                                      bool success =
+                                          await BookingService.createBooking(
+                                            booking,
+                                          );
+
+                                      if (success) {
+                                        await loadBookedSeats();
+
+                                        selectedSeats.clear();
+
+                                        setState(() {});
+
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          const SnackBar(
+                                            content: Text(
+                                              "Booking Saved Successfully",
+                                            ),
+
+                                            backgroundColor: Colors.green,
+                                          ),
+                                        );
+                                      } else {
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          const SnackBar(
+                                            content: Text("Booking Failed"),
+
+                                            backgroundColor: Colors.red,
+                                          ),
+                                        );
+                                      }
                                     },
 
                               style: ElevatedButton.styleFrom(

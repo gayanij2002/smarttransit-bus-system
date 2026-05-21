@@ -3,19 +3,20 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import 'api_service.dart';
-
 import '../models/bus_model.dart';
 
 class BusService {
-  // CHANGE IP IF YOUR WIFI IP CHANGES
-
-  static const String baseUrl = ApiService.baseUrl;
-
+  // ================= GET ALL BUSES =================
   static Future<List<BusModel>> getBuses() async {
     try {
       final response = await http.get(
-        Uri.parse("${ApiService.baseUrl}/api/buses/"),
+        ApiService.buildUri("/api/buses/"),
+
+        headers: {"Content-Type": "application/json"},
       );
+
+      print("BUSES STATUS: ${response.statusCode}");
+      print("BUSES BODY: ${response.body}");
 
       if (response.statusCode == 200) {
         final List data = jsonDecode(response.body);
@@ -25,9 +26,7 @@ class BusService {
 
       return [];
     } catch (e) {
-      // ignore: avoid_print
-      print(e);
-
+      print("GET BUSES ERROR: $e");
       return [];
     }
   }

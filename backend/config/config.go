@@ -9,7 +9,7 @@ import (
 
 func LoadEnv() {
 
-	// Skip .env loading in Choreo
+	// Running on Choreo
 	if os.Getenv("CHOREO") != "" {
 		log.Println("Running on Choreo")
 		return

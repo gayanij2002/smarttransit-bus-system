@@ -2,13 +2,15 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
+import 'api_service.dart';
+
 import '../models/route_model.dart';
 
 class RouteService {
   static Future<List<RouteModel>> getRoutes() async {
     try {
       final response = await http.get(
-        Uri.parse("http://192.168.1.2:8080/api/routes/"),
+        Uri.parse("${ApiService.baseUrl}/api/routes/"),
       );
 
       if (response.statusCode == 200) {

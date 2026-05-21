@@ -5,19 +5,21 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
   static const String baseUrl = "http://192.168.1.2:8080";
+  // CHOREO SECURITY TOKEN
 
-  // LOGIN
+  // ================= LOGIN =================
   static Future<bool> login(String email, String password) async {
     try {
       final response = await http.post(
         Uri.parse("$baseUrl/api/auth/login"),
-
         headers: {"Content-Type": "application/json"},
-
         body: jsonEncode({"email": email, "password": password}),
       );
 
-      // ignore: avoid_print
+      print("LOGIN STATUS: ${response.statusCode}");
+      print("LOGIN BODY: ${response.body}");
+
+      print(response.statusCode);
       print(response.body);
 
       if (response.statusCode == 200) {
@@ -34,14 +36,12 @@ class ApiService {
 
       return false;
     } catch (e) {
-      // ignore: avoid_print
       print("LOGIN ERROR: $e");
-
       return false;
     }
   }
 
-  // REGISTER
+  // ================= REGISTER =================
   static Future<bool> register(
     String name,
     String email,
@@ -50,14 +50,12 @@ class ApiService {
     try {
       final response = await http.post(
         Uri.parse("$baseUrl/api/auth/register"),
-
         headers: {"Content-Type": "application/json"},
-
         body: jsonEncode({"name": name, "email": email, "password": password}),
       );
 
-      // ignore: avoid_print
-      print(response.body);
+      print("REGISTER STATUS: ${response.statusCode}");
+      print("REGISTER BODY: ${response.body}");
 
       if (response.statusCode == 200) {
         return true;
@@ -65,14 +63,12 @@ class ApiService {
 
       return false;
     } catch (e) {
-      // ignore: avoid_print
       print("REGISTER ERROR: $e");
-
       return false;
     }
   }
 
-  // GET PROFILE
+  // ================= PROFILE =================
   static Future<Map<String, dynamic>?> getProfile() async {
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -80,20 +76,20 @@ class ApiService {
       String? token = prefs.getString("token");
 
       if (token == null) {
+        print("NO JWT TOKEN FOUND");
         return null;
       }
 
       final response = await http.get(
         Uri.parse("$baseUrl/api/auth/profile"),
-
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer $token",
         },
       );
 
-      // ignore: avoid_print
-      print(response.body);
+      print("PROFILE STATUS: ${response.statusCode}");
+      print("PROFILE BODY: ${response.body}");
 
       if (response.statusCode == 200) {
         return jsonDecode(response.body);
@@ -101,9 +97,7 @@ class ApiService {
 
       return null;
     } catch (e) {
-      // ignore: avoid_print
       print("PROFILE ERROR: $e");
-
       return null;
     }
   }

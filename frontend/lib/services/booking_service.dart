@@ -2,15 +2,17 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
+import 'api_service.dart';
+
 import '../models/booking_model.dart';
 
 class BookingService {
-  static const String baseUrl = "http://192.168.1.2:8080";
+  static const String baseUrl = ApiService.baseUrl;
 
   static Future<bool> createBooking(BookingModel booking) async {
     try {
       final response = await http.post(
-        Uri.parse("$baseUrl/api/bookings/"),
+        Uri.parse("${ApiService.baseUrl}/api/bookings/"),
 
         headers: {"Content-Type": "application/json"},
 

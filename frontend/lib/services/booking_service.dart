@@ -12,6 +12,7 @@ class BookingService {
   static const String baseUrl = ApiService.baseUrl;
 
   // ================= CREATE BOOKING =================
+
   static Future<bool> createBooking(BookingModel booking) async {
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -20,6 +21,7 @@ class BookingService {
 
       if (token == null) {
         print("NO JWT TOKEN FOUND");
+
         return false;
       }
 
@@ -28,6 +30,7 @@ class BookingService {
 
         headers: {
           "Content-Type": "application/json",
+
           "Authorization": "Bearer $token",
         },
 
@@ -35,16 +38,23 @@ class BookingService {
       );
 
       print("BOOKING STATUS: ${response.statusCode}");
+
       print("BOOKING BODY: ${response.body}");
 
-      return response.statusCode == 200 || response.statusCode == 201;
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return true;
+      }
+
+      return false;
     } catch (e) {
       print("BOOKING ERROR: $e");
+
       return false;
     }
   }
 
   // ================= GET BOOKED SEATS =================
+
   static Future<List<int>> getBookedSeats(String busId) async {
     try {
       final response = await http.get(
@@ -52,17 +62,31 @@ class BookingService {
       );
 
       print("SEATS STATUS: ${response.statusCode}");
+
       print("SEATS BODY: ${response.body}");
 
       if (response.statusCode == 200) {
-        List data = jsonDecode(response.body);
+        final dynamic decoded = jsonDecode(response.body);
 
-        return data.map((e) => e as int).toList();
+        // Ensure response is list
+        if (decoded is List) {
+          List<int> seats = decoded
+              .map((e) => int.parse(e.toString()))
+              .toList();
+
+          // Remove duplicates
+          seats = seats.toSet().toList();
+
+          print("FINAL BOOKED SEATS: $seats");
+
+          return seats;
+        }
       }
 
       return [];
     } catch (e) {
-      print("GET SEATS ERROR: $e");
+      print("GET BOOKED SEATS ERROR: $e");
+
       return [];
     }
   }

@@ -18,6 +18,8 @@ class _BookingScreenState extends State<BookingScreen> {
 
   List<int> bookedSeats = [];
 
+  bool isLoading = true;
+
   final int ticketPrice = 1500;
 
   @override
@@ -27,15 +29,32 @@ class _BookingScreenState extends State<BookingScreen> {
     loadBookedSeats();
   }
 
+  // ================= LOAD BOOKED SEATS =================
+
   Future<void> loadBookedSeats() async {
+    setState(() {
+      isLoading = true;
+    });
+
     List<int> seats = await BookingService.getBookedSeats(widget.busId);
 
+    print("BOOKED SEATS UI: $seats");
+
     setState(() {
-      bookedSeats = seats;
+      bookedSeats = seats.toSet().toList();
+
+      isLoading = false;
     });
   }
 
+  // ================= TOGGLE SEAT =================
+
   void toggleSeat(int seatNumber) {
+    // prevent selecting booked seat
+    if (bookedSeats.contains(seatNumber)) {
+      return;
+    }
+
     setState(() {
       if (selectedSeats.contains(seatNumber)) {
         selectedSeats.remove(seatNumber);
@@ -43,6 +62,40 @@ class _BookingScreenState extends State<BookingScreen> {
         selectedSeats.add(seatNumber);
       }
     });
+  }
+
+  // ================= BOOK SEATS =================
+
+  Future<void> bookSeats() async {
+    BookingModel booking = BookingModel(
+      busId: widget.busId,
+      seats: selectedSeats,
+    );
+
+    bool success = await BookingService.createBooking(booking);
+
+    if (success) {
+      // reload booked seats from backend
+      await loadBookedSeats();
+
+      setState(() {
+        selectedSeats.clear();
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Booking Saved Successfully"),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Seat already booked or booking failed"),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   @override
@@ -178,90 +231,97 @@ class _BookingScreenState extends State<BookingScreen> {
 
                     // ================= SEATS =================
                     Expanded(
-                      child: GridView.builder(
-                        itemCount: 32,
+                      child: isLoading
+                          ? const Center(child: CircularProgressIndicator())
+                          : GridView.builder(
+                              itemCount: 32,
 
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 4,
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 4,
 
-                              mainAxisSpacing: 18,
+                                    mainAxisSpacing: 18,
 
-                              crossAxisSpacing: 18,
+                                    crossAxisSpacing: 18,
 
-                              childAspectRatio: 1,
-                            ),
+                                    childAspectRatio: 1,
+                                  ),
 
-                        itemBuilder: (context, index) {
-                          int seatNumber = index + 1;
+                              itemBuilder: (context, index) {
+                                int seatNumber = index + 1;
 
-                          bool isSelected = selectedSeats.contains(seatNumber);
+                                bool isSelected = selectedSeats.contains(
+                                  seatNumber,
+                                );
 
-                          bool isBooked = bookedSeats.contains(seatNumber);
+                                bool isBooked = bookedSeats.contains(
+                                  seatNumber,
+                                );
 
-                          return GestureDetector(
-                            onTap: isBooked
-                                ? null
-                                : () {
+                                return GestureDetector(
+                                  onTap: () {
                                     toggleSeat(seatNumber);
                                   },
 
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: isBooked
-                                    ? Colors.grey.shade400
-                                    : isSelected
-                                    ? buttonViolet
-                                    : Colors.white,
+                                  child: AnimatedContainer(
+                                    duration: const Duration(milliseconds: 200),
 
-                                borderRadius: BorderRadius.circular(18),
-
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.05),
-
-                                    blurRadius: 8,
-                                  ),
-                                ],
-                              ),
-
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-
-                                children: [
-                                  Icon(
-                                    Icons.event_seat,
-
-                                    color: isBooked
-                                        ? Colors.white
-                                        : isSelected
-                                        ? Colors.white
-                                        : buttonViolet,
-
-                                    size: 34,
-                                  ),
-
-                                  const SizedBox(height: 6),
-
-                                  Text(
-                                    seatNumber.toString(),
-
-                                    style: TextStyle(
+                                    decoration: BoxDecoration(
                                       color: isBooked
-                                          ? Colors.white
+                                          ? Colors.grey.shade400
                                           : isSelected
-                                          ? Colors.white
-                                          : textGray,
+                                          ? buttonViolet
+                                          : Colors.white,
 
-                                      fontWeight: FontWeight.bold,
+                                      borderRadius: BorderRadius.circular(18),
+
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withOpacity(0.05),
+
+                                          blurRadius: 8,
+                                        ),
+                                      ],
+                                    ),
+
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+
+                                      children: [
+                                        Icon(
+                                          Icons.event_seat,
+
+                                          color: isBooked
+                                              ? Colors.white
+                                              : isSelected
+                                              ? Colors.white
+                                              : buttonViolet,
+
+                                          size: 34,
+                                        ),
+
+                                        const SizedBox(height: 6),
+
+                                        Text(
+                                          seatNumber.toString(),
+
+                                          style: TextStyle(
+                                            color: isBooked
+                                                ? Colors.white
+                                                : isSelected
+                                                ? Colors.white
+                                                : textGray,
+
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                ],
-                              ),
+                                );
+                              },
                             ),
-                          );
-                        },
-                      ),
                     ),
 
                     const SizedBox(height: 20),
@@ -349,46 +409,7 @@ class _BookingScreenState extends State<BookingScreen> {
                               onPressed: selectedSeats.isEmpty
                                   ? null
                                   : () async {
-                                      BookingModel booking = BookingModel(
-                                        busId: widget.busId,
-
-                                        seats: selectedSeats,
-                                      );
-
-                                      bool success =
-                                          await BookingService.createBooking(
-                                            booking,
-                                          );
-
-                                      if (success) {
-                                        await loadBookedSeats();
-
-                                        selectedSeats.clear();
-
-                                        setState(() {});
-
-                                        ScaffoldMessenger.of(
-                                          context,
-                                        ).showSnackBar(
-                                          const SnackBar(
-                                            content: Text(
-                                              "Booking Saved Successfully",
-                                            ),
-
-                                            backgroundColor: Colors.green,
-                                          ),
-                                        );
-                                      } else {
-                                        ScaffoldMessenger.of(
-                                          context,
-                                        ).showSnackBar(
-                                          const SnackBar(
-                                            content: Text("Booking Failed"),
-
-                                            backgroundColor: Colors.red,
-                                          ),
-                                        );
-                                      }
+                                      await bookSeats();
                                     },
 
                               style: ElevatedButton.styleFrom(

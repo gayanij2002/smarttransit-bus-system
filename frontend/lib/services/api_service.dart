@@ -1,26 +1,32 @@
+// ignore_for_file: avoid_print
+
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
-  static const String baseUrl = "http://192.168.1.2:8080";
-  // CHOREO SECURITY TOKEN
+  // ================= CHOREO BASE URL =================
+  static const String baseUrl =
+      "https://8c0a7554-4281-4356-8b7f-522782a0f64a-dev.e1-us-east-azure.choreoapis.dev/default/backend/v1.1";
+  // ================= BUILD URI =================
+  static Uri buildUri(String path) {
+    return Uri.parse(baseUrl + path);
+  }
 
   // ================= LOGIN =================
   static Future<bool> login(String email, String password) async {
     try {
       final response = await http.post(
-        Uri.parse("$baseUrl/api/auth/login"),
+        buildUri("/api/auth/login"),
+
         headers: {"Content-Type": "application/json"},
+
         body: jsonEncode({"email": email, "password": password}),
       );
 
       print("LOGIN STATUS: ${response.statusCode}");
       print("LOGIN BODY: ${response.body}");
-
-      print(response.statusCode);
-      print(response.body);
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -49,26 +55,24 @@ class ApiService {
   ) async {
     try {
       final response = await http.post(
-        Uri.parse("$baseUrl/api/auth/register"),
+        buildUri("/api/auth/register"),
+
         headers: {"Content-Type": "application/json"},
+
         body: jsonEncode({"name": name, "email": email, "password": password}),
       );
 
       print("REGISTER STATUS: ${response.statusCode}");
       print("REGISTER BODY: ${response.body}");
 
-      if (response.statusCode == 200) {
-        return true;
-      }
-
-      return false;
+      return response.statusCode == 200 || response.statusCode == 201;
     } catch (e) {
       print("REGISTER ERROR: $e");
       return false;
     }
   }
 
-  // ================= PROFILE =================
+  // ================= GET PROFILE =================
   static Future<Map<String, dynamic>?> getProfile() async {
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -81,7 +85,8 @@ class ApiService {
       }
 
       final response = await http.get(
-        Uri.parse("$baseUrl/api/auth/profile"),
+        buildUri("/api/auth/profile"),
+
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer $token",
@@ -100,5 +105,12 @@ class ApiService {
       print("PROFILE ERROR: $e");
       return null;
     }
+  }
+
+  // ================= LOGOUT =================
+  static Future<void> logout() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    await prefs.remove("token");
   }
 }

@@ -11,6 +11,8 @@
 package main
 
 import (
+	"os"
+
 	"smarttransit-backend/config"
 	"smarttransit-backend/database"
 	"smarttransit-backend/internal/auth"
@@ -30,19 +32,25 @@ import (
 
 func main() {
 
+	// Load environment variables
 	config.LoadEnv()
 
+	// Connect database
 	database.ConnectDB()
 
+	// Create Gin router
 	router := gin.Default()
 
+	// Enable CORS
+	router.Use(cors.Default())
+
+	// Swagger
 	router.GET(
 		"/swagger/*any",
 		ginSwagger.WrapHandler(swaggerFiles.Handler),
 	)
 
-	router.Use(cors.Default())
-
+	// Routes
 	auth.AuthRoutes(router)
 
 	buses.BusRoutes(router)
@@ -55,11 +63,19 @@ func main() {
 		router.Group("/api"),
 	)
 
+	// Test route
 	router.GET("/", func(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"message": "SmartTransit Backend Running",
 		})
 	})
 
-	router.Run(":8080")
+	// Choreo/Docker PORT support
+	port := os.Getenv("PORT")
+
+	if port == "" {
+		port = "8080"
+	}
+
+	router.Run(":" + port)
 }

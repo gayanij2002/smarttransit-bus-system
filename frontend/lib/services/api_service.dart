@@ -9,7 +9,6 @@ class ApiService {
   // ================= CHOREO BASE URL =================
   static const String baseUrl =
       "https://8c0a7554-4281-4356-8b7f-522782a0f64a-dev.e1-us-east-azure.choreoapis.dev/default/backend/v1.1";
-
   // ================= BUILD URI =================
   static Uri buildUri(String path) {
     return Uri.parse(baseUrl + path);

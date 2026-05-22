@@ -752,6 +752,10 @@ const docTemplate = `{
         },
         "bookings.CreateBookingRequest": {
             "type": "object",
+            "required": [
+                "bus_id",
+                "seats"
+            ],
             "properties": {
                 "bus_id": {
                     "type": "string"

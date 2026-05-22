@@ -37,6 +37,9 @@ definitions:
         items:
           type: integer
         type: array
+    required:
+    - bus_id
+    - seats
     type: object
   buses.Bus:
     properties:
